@@ -1,5 +1,5 @@
 import { buildProgramFromSources, loadShadersFromURLS, setupWebGL } from "../../libs/utils.js";
-import { ortho, lookAt, flatten, perspective, vec3 } from "../../libs/MV.js";
+import { ortho, lookAt, flatten, perspective, vec3, rotateY } from "../../libs/MV.js";
 import {modelView, loadMatrix, multRotationX, multRotationY, multRotationZ, multScale, multTranslation, popMatrix, pushMatrix} from "../../libs/stack.js";
 
 import * as CUBE from '../../libs/objects/cube.js';
@@ -158,10 +158,18 @@ function setup(shaders)
       }
 
     function ground(){
-    selectColor(vec3(0.0, 0.0, 0.0));
+    selectColor(vec3(235, 205, 75));
     multScale([2.4, 0.1, 2.4]);
     uploadModelView();
     CUBE.draw(gl, program, mode);
+    }
+
+    function world(){
+        pushMatrix();
+            multRotationY(50.0); // Nao funciona e nao sei pq
+            //multTranslation([2.0, 0.0, 2.0]);
+            ground();
+        popMatrix();
     }
 
     function render()
@@ -183,7 +191,7 @@ function setup(shaders)
         // Load the ModelView matrix with the Worl to Camera (View) matrix
         loadMatrix(mView);
 
-        ground();
+        world();
     }
 }
 
