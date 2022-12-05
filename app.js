@@ -10,15 +10,6 @@ import * as TORUS from '../../libs/objects/torus.js'
 
 import * as dat from "../../libs/dat.gui.module.js";
 
-let camera = {
-        eye: vec3(2, 1.2, 1),
-        at: vec3(0, 0.6, 0),
-        up: vec3(0, 1, 0),
-        fovy: 90,
-        near: 0.0,
-        far: 10.0
-    };
-let ADJUSTABLE_VARS = {};
 
 
 function setup(shaders)
@@ -35,11 +26,39 @@ function setup(shaders)
 
     let program = buildProgramFromSources(gl, shaders["shader.vert"], shaders["shader.frag"]);
 
+    let camera = {
+            eye: vec3(2, 1.2, 1),
+            at: vec3(0, 0.6, 0),
+            up: vec3(0, 1, 0),
+            fovy: 90,
+            near: 0.1,
+            far: 40.0
+        };
+
+    const gui = new dat.GUI();
+    
+    // Camera GUI
+    const cameraFolder = gui.addFolder("Camera");
+
+    const cameraEye = cameraFolder.addFolder("eye");
+    const cameraAt = cameraFolder.addFolder("at");
+    cameraEye.add(camera.eye, 0).step(0.05).name("x"); 
+    cameraEye.add(camera.eye, 1).step(0.05).name("y"); 
+    cameraEye.add(camera.eye, 2).step(0.05).name("z"); 
+    cameraAt.add(camera.at, 0).step(0.05).name("x"); 
+    cameraAt.add(camera.at, 1).step(0.05).name("y"); 
+    cameraAt.add(camera.at, 2).step(0.05).name("z"); 
+    cameraFolder.add(camera, "fovy", 1.0, 180.0);
+    cameraFolder.add(camera, "near", 0.0, 2.0);
+    cameraFolder.add(camera, "far", 0.0, 50.0);
+  
+    let ADJUSTABLE_VARS = {};
+   
     let mProjection = perspective(
-        camera.fovy,
-        aspect, 
-        0.0, 
-        150.0);
+            camera.fovy,
+            aspect, 
+            camera.near, 
+            camera.far);
     let mView = lookAt(camera.eye, camera.at, [0, 1, 0]);
 
     let zoom = 1.0;
@@ -132,8 +151,8 @@ function setup(shaders)
         mProjection = perspective(
             camera.fovy,
             aspect, 
-            0.1, 
-            40.0);
+            camera.near, 
+            camera.far);
     }
 
     function uploadProjection()
@@ -158,10 +177,10 @@ function setup(shaders)
       }
 
     function ground(){
-    selectColor(vec3(235, 205, 75));
-    multScale([2.4, 0.1, 2.4]);
-    uploadModelView();
-    CUBE.draw(gl, program, mode);
+      selectColor(vec3(235, 205, 75));
+      multScale([2.4, 0.1, 2.4]);
+      uploadModelView();
+      CUBE.draw(gl, program, mode);
     }
 
     function world(){
@@ -170,6 +189,16 @@ function setup(shaders)
             //multTranslation([2.0, 0.0, 2.0]);
             ground();
         popMatrix();
+        pushMatrix();
+            bunny();
+        popMatrix();
+    }
+
+    function bunny(){
+      selectColor(vec3(255, 51, 143));
+      multScale([3.5, 3.5, 3.5]);
+      uploadModelView();
+      BUNNY.draw(gl, program, mode);
     }
 
     function render()
@@ -184,11 +213,13 @@ function setup(shaders)
         mProjection = perspective(
             camera.fovy,
             aspect, 
-            0.1, 
-            40.0);
+            camera.near, 
+            camera.far);
         uploadProjection(mProjection);
 
         // Load the ModelView matrix with the Worl to Camera (View) matrix
+    
+        mView = lookAt(camera.eye, camera.at, [0, 1, 0]);
         loadMatrix(mView);
 
         world();
