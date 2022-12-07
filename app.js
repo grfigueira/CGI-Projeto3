@@ -1,5 +1,5 @@
 import { buildProgramFromSources, loadShadersFromURLS, setupWebGL } from "../../libs/utils.js";
-  import { ortho, lookAt, flatten, perspective, vec3, vec2, rotateY, rotateX, rotateZ, mult,rotate } from "../../libs/MV.js";
+  import { ortho, lookAt, flatten, perspective, vec3, vec2, rotateY, rotateX, rotateZ, mult,rotate, normalMatrix } from "../../libs/MV.js";
 import {modelView, loadMatrix, multRotationX, multRotationY, multRotationZ, multScale, multTranslation, popMatrix, pushMatrix} from "../../libs/stack.js";
 
 import * as CUBE from '../../libs/objects/cube.js';
@@ -208,6 +208,8 @@ function setup(shaders)
     function uploadModelView()
     {
         uploadMatrix("mModelView", modelView());
+        uploadMatrix("mNormals", normalMatrix(modelView()));
+        uploadMatrix("mViewNormals", normalMatrix(mView));
     }
 
     function uploadMatrix(name, m) {
