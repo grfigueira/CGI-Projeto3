@@ -271,32 +271,37 @@ function setup(shaders)
         // Load the ModelView matrix with the Worl to Camera (View) matrix
     
         mView = lookAt(camera.eye, camera.at, [0, 1, 0]);
+    
+        mView = lookAt(camera.eye, camera.at, [0, 1, 0]);
 
-        let sign = 1;
         
-        if(camera.eye[2] < 0){
-            sign = -sign;
-        }
-
-        if(camera.eye[0] < 0){
-            sign = -sign;
-        }
-
+        
         if(camera.eye[2] !=0 && camera.eye[0] !=0){
+            
+            let sign = -1;
+            if(camera.eye[2] < 0){
+                sign = -sign;
+            }
+    
+            if(camera.eye[0] < 0){
+                sign = -sign;
+            }
+    
             if(cameraAngleY/360<180){
                 sign = -sign;
             }
-            mView = mult(mView,rotateZ((-sign*cameraAngleY)));
-            mView = mult(mView,rotateX((sign*cameraAngleY)));
+
+            mView = mult(mView,rotateZ((sign*cameraAngleY)/(camera.eye[2])));
+            mView = mult(mView,rotateX((-sign*cameraAngleY)/(camera.eye[0])));
         }else{
             
             if(camera.eye[2] !=0){
-                mView = mult(mView,rotateX((sign*cameraAngleY)));
+                mView = mult(mView,rotateX((cameraAngleY)/(camera.eye[2])));
             }
             if(camera.eye[0] != 0){
-                mView = mult(mView,rotateZ((sign*cameraAngleY)));
+                mView = mult(mView,rotateZ((cameraAngleY)/(camera.eye[0])));
             }
-         }   
+         } 
 
         mView = mult(mView,rotateY(cameraAngleX));
         loadMatrix(mView);
