@@ -1,5 +1,5 @@
 import { buildProgramFromSources, loadShadersFromURLS, setupWebGL } from "../../libs/utils.js";
-  import { ortho, lookAt, flatten, perspective, vec3, vec2, rotateY, rotateX, rotateZ, mult } from "../../libs/MV.js";
+  import { ortho, lookAt, flatten, perspective, vec3, vec2, rotateY, rotateX, rotateZ, mult,rotate } from "../../libs/MV.js";
 import {modelView, loadMatrix, multRotationX, multRotationY, multRotationZ, multScale, multTranslation, popMatrix, pushMatrix} from "../../libs/stack.js";
 
 import * as CUBE from '../../libs/objects/cube.js';
@@ -12,10 +12,10 @@ import * as dat from "../../libs/dat.gui.module.js";
 
 
 let mouseMoving = false;
-const cameraSpeedX = 10.0;
-const cameraSpeedY = 10.0;
-let cameraAngleX = 20;
-let cameraAngleY = 20;
+const cameraSpeedX = 100.0;
+const cameraSpeedY = 100.0;
+let cameraAngleX = 0;
+let cameraAngleY = 0;
 let lastMouseX = 0.0;
 let lastMouseY = 0.0;
 
@@ -35,7 +35,7 @@ function setup(shaders)
     let program = buildProgramFromSources(gl, shaders["shader.vert"], shaders["shader.frag"]);
 
     let camera = {
-            eye: vec3(2, 1.2, 1),
+            eye: vec3(2, 2, 0),
             at: vec3(0, 0.6, 0),
             up: vec3(0, 1, 0),
             fovy: 90,
@@ -154,7 +154,7 @@ function setup(shaders)
       mouseMoving = true;
       let mousePos1 = getCursorPosition(canvas, event); 
       lastMouseX = mousePos1[0];
-      lastMouseX = mousePos1[1];
+      lastMouseY = mousePos1[1];
     });
 
     canvas.addEventListener("mouseup", function(event) {
@@ -166,6 +166,9 @@ function setup(shaders)
       if(mouseMoving) {
           cameraAngleX += (mousePos2[0] - lastMouseX) * cameraSpeedX;
           cameraAngleY += (mousePos2[1] - lastMouseY) * cameraSpeedY;
+          let mousePos1 = getCursorPosition(canvas, event); 
+          lastMouseX = mousePos1[0];
+          lastMouseY = mousePos1[1];
       }
     });
 
@@ -226,7 +229,7 @@ function setup(shaders)
 
     function world(){
         pushMatrix();
-            multRotationY(50.0); // Nao funciona e nao sei pq
+            //multRotationY(50.0); // Nao funciona e nao sei pq
             //multTranslation([2.0, 0.0, 2.0]);
             ground();
         popMatrix();
@@ -265,9 +268,9 @@ function setup(shaders)
         // Load the ModelView matrix with the Worl to Camera (View) matrix
     
         mView = lookAt(camera.eye, camera.at, [0, 1, 0]);
-        mView = mult(mView, rotateZ(cameraAngleY));
-        mView = mult(mView, rotateY(cameraAngleX));
-        //mView = lookAt(camera.eye, camera.at, [0, 1, 0]);
+
+        mView = mult(mView,rotateZ(cameraAngleY));
+        mView = mult(mView,rotateY(cameraAngleX));
         loadMatrix(mView);
 
         world();
