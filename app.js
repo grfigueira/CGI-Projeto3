@@ -1,5 +1,5 @@
 import { buildProgramFromSources, loadShadersFromURLS, setupWebGL } from "../../libs/utils.js";
-import { ortho, lookAt, flatten, perspective, vec3, rotateY } from "../../libs/MV.js";
+  import { ortho, lookAt, flatten, perspective, vec3, vec2, rotateY, rotateX, rotateZ, mult } from "../../libs/MV.js";
 import {modelView, loadMatrix, multRotationX, multRotationY, multRotationZ, multScale, multTranslation, popMatrix, pushMatrix} from "../../libs/stack.js";
 
 import * as CUBE from '../../libs/objects/cube.js';
@@ -10,6 +10,14 @@ import * as TORUS from '../../libs/objects/torus.js'
 
 import * as dat from "../../libs/dat.gui.module.js";
 
+
+let mouseMoving = false;
+const cameraSpeedX = 10.0;
+const cameraSpeedY = 10.0;
+let cameraAngleX = 20;
+let cameraAngleY = 20;
+let lastMouseX = 0.0;
+let lastMouseY = 0.0;
 
 
 function setup(shaders)
@@ -71,7 +79,9 @@ function setup(shaders)
 
     resize_canvas();
     window.addEventListener("resize", resize_canvas);
-
+    
+    document.onM
+    
     document.onkeydown = function(event) {
         switch(event.key) {
             case '1':
@@ -127,6 +137,37 @@ function setup(shaders)
                 break;
         }
     }
+    
+  function getCursorPosition(canvas, event) {
+  
+       
+        const mx = event.offsetX;
+        const my = event.offsetY;
+
+        const x = (((mx / canvas.width * 2) - 1)*1.5);
+        const y = ((((canvas.height - my)/canvas.height * 2) -1) * (1.5 * (canvas.height / canvas.width)));
+
+        return vec2(x,y);
+    }
+
+    canvas.addEventListener("mousedown", function(event) {
+      mouseMoving = true;
+      let mousePos1 = getCursorPosition(canvas, event); 
+      lastMouseX = mousePos1[0];
+      lastMouseX = mousePos1[1];
+    });
+
+    canvas.addEventListener("mouseup", function(event) {
+      mouseMoving = false;
+    });
+    
+    canvas.addEventListener("mousemove", function(event) {
+      let mousePos2 = getCursorPosition(canvas, event); 
+      if(mouseMoving) {
+          cameraAngleX += (mousePos2[0] - lastMouseX) * cameraSpeedX;
+          cameraAngleY += (mousePos2[1] - lastMouseY) * cameraSpeedY;
+      }
+    });
 
     gl.clearColor(0.3, 0.3, 0.3, 1.0);
     gl.enable(gl.DEPTH_TEST);   // Enables Z-buffer depth test
@@ -201,6 +242,10 @@ function setup(shaders)
       BUNNY.draw(gl, program, mode);
     }
 
+    function getCameraEye(){
+      
+    }
+
     function render()
     {
         window.requestAnimationFrame(render);
@@ -220,6 +265,9 @@ function setup(shaders)
         // Load the ModelView matrix with the Worl to Camera (View) matrix
     
         mView = lookAt(camera.eye, camera.at, [0, 1, 0]);
+        mView = mult(mView, rotateZ(cameraAngleY));
+        mView = mult(mView, rotateY(cameraAngleX));
+        //mView = lookAt(camera.eye, camera.at, [0, 1, 0]);
         loadMatrix(mView);
 
         world();
