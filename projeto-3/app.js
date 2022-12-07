@@ -166,6 +166,7 @@ function setup(shaders)
       if(mouseMoving) {
           cameraAngleX += (mousePos2[0] - lastMouseX) * cameraSpeedX;
           cameraAngleY += (mousePos2[1] - lastMouseY) * cameraSpeedY;
+
           let mousePos1 = getCursorPosition(canvas, event); 
           lastMouseX = mousePos1[0];
           lastMouseY = mousePos1[1];
@@ -269,7 +270,32 @@ function setup(shaders)
     
         mView = lookAt(camera.eye, camera.at, [0, 1, 0]);
 
-        mView = mult(mView,rotateZ(cameraAngleY));
+        let sign = 1;
+        
+        if(camera.eye[2] < 0){
+            sign = -sign;
+        }
+
+        if(camera.eye[0] < 0){
+            sign = -sign;
+        }
+
+        if(camera.eye[2] !=0 && camera.eye[0] !=0){
+            if(cameraAngleY/360<180){
+                sign = -sign;
+            }
+            mView = mult(mView,rotateZ((-sign*cameraAngleY)));
+            mView = mult(mView,rotateX((sign*cameraAngleY)));
+        }else{
+            
+            if(camera.eye[2] !=0){
+                mView = mult(mView,rotateX((sign*cameraAngleY)));
+            }
+            if(camera.eye[0] != 0){
+                mView = mult(mView,rotateZ((sign*cameraAngleY)));
+            }
+         }   
+
         mView = mult(mView,rotateY(cameraAngleX));
         loadMatrix(mView);
 
