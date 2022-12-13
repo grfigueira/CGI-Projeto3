@@ -1,5 +1,12 @@
 precision mediump float;
 
+struct MaterialI{
+    vec3 ka;
+    vec3 kd;
+    vec3 ks;
+    float shininess;
+};
+
 varying vec3 fPosition;
 varying vec3 fNormal;
 
@@ -19,6 +26,10 @@ vec3 specularColor = lightSpe * materialSpe;
 varying vec3 fLight;
 varying vec3 fViewer;
 
+uniform MaterialI uMaterial;
+
+
+
 void main() {
     vec3 L = normalize(fLight);
     vec3 V = normalize(fViewer);
@@ -29,6 +40,7 @@ void main() {
     vec3 diffuse = diffuseFactor * diffuseColor;
     float specularFactor = pow(max(dot(N, H) , 0.0), shininess);
     vec3 specular = specularFactor * specularColor;
+
     if( dot(L,N) < 0.0) {
         specular = vec3(0.0, 0.0, 0.0);
     }

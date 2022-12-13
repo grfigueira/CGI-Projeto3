@@ -1,5 +1,5 @@
 import { buildProgramFromSources, loadShadersFromURLS, setupWebGL } from "../../libs/utils.js";
-  import { ortho, lookAt, flatten, perspective, vec3, vec2, rotateY, rotateX, rotateZ, mult,rotate, normalMatrix } from "../../libs/MV.js";
+  import { ortho, lookAt, flatten, perspective, vec3, vec2,vec4, rotateY, rotateX, rotateZ, mult,scale, normalMatrix } from "../../libs/MV.js";
 import {modelView, loadMatrix, multRotationX, multRotationY, multRotationZ, multScale, multTranslation, popMatrix, pushMatrix} from "../../libs/stack.js";
 
 import * as CUBE from '../../libs/objects/cube.js';
@@ -14,11 +14,94 @@ import * as dat from "../../libs/dat.gui.module.js";
 let mouseMoving = false;
 const cameraSpeedX = 100.0;
 const cameraSpeedY = 100.0;
+const RGB = 255;
 let cameraAngleX = 0;
 let cameraAngleY = 0;
 let lastMouseX = 0.0;
 let lastMouseY = 0.0;
 
+//primitive types
+
+const BUNNY_TYPE = "bunny";
+const TORUS_TYPE = "torus";
+const CUBE_TYPE = "cube";
+const FLOOR_TYPE = "floor";
+const CYLINDER_TYPE = "cylinder";
+const LIGHT_TYPE = "light"
+
+let bunnyPrimitive = {
+    Ka: vec3(227,152,150),
+    Kd: vec3(150, 150, 150),
+    Ks: vec3(200, 200, 200),
+    shininess: 100,
+  };
+
+let donutPrimitive = {
+    Ka: vec3(0,139,38),
+    Kd: vec3(150, 150, 150),
+    Ks: vec3(200, 200, 200),
+    shininess: 100,
+  };
+
+let  cubePrimitive = {
+    Ka: vec3(150,75,75),
+    Kd: vec3(150, 75, 75),
+    Ks: vec3(200, 200, 200),
+    shininess: 100,
+  }
+
+let  floorPrimitive = {
+    Ka: vec3(150,150,75),
+    Kd: vec3(125, 125, 125),
+    Ks: vec3(0, 0, 0),
+    shininess: 1.0,
+  };
+
+let  cylinderPrimitive = {
+    Ka: vec3(0,150,100),
+    Kd: vec3(0, 150, 100),
+    Ks: vec3(200, 200, 200),
+    shininess: 100,
+  }
+
+let  lightPrimitive = {
+    Ka: vec3(RGB, RGB, RGB),
+    Kd: vec3(RGB, RGB, RGB),
+    Ks: vec3(RGB, RGB, RGB),
+    shininess: 100,
+  }
+
+let  lightInfo = [{ //spotlight
+    active: true,
+    position: vec4(0.0, 10.0, 0.0, 1.0),
+    ambient: vec3(50.0, 50.0, 50.0),
+    diffuse: vec3(60.0, 60.0, 60.0),
+    specular: vec3(200.0, 200.0, 200.0),
+    axis: vec4(0.0, 0.0, -1.0, 0.0),
+    aperture: 10.0,
+    cutoff: 10.0,
+  },
+  { //direcional
+    active: true,
+    position: vec4(-20.0, 5.0, 5.0, 0.0),
+    ambient: vec3(50.0, 0.0, 0.0),
+    diffuse: vec3(50.0, 0.0, 0.0),
+    specular: vec3(150, 0.0, 0.0),
+    axis: vec4(20.0, -5.0, -5.0, 0.0),
+    aperture: 180.0,
+    cutoff: -1.0,
+  },
+  { //pontual
+    active: true,
+    position: vec4(5.0, 5.0, 2.0, 1.0),
+    ambient: vec3(75.0, 75.0, 100.0),
+    diffuse: vec3(75.0, 75.0, 100.0),
+    specular: vec3(150, 150.0, 175.0),
+    axis: vec4(-5.0, 5.0, -2.0, 0.0),
+    aperture: 180.0,
+    cutoff: -1.0,
+  }
+  ]
 
 function setup(shaders)
 {
@@ -216,17 +299,58 @@ function setup(shaders)
         gl.uniformMatrix4fv(gl.getUniformLocation(program, name), false, flatten(m));
     }
 
+    function primitiveToShaderPerType(type){
+        
+            switch(type){
+                case BUNNY_TYPE:
+                    primitiveMaterialToShader(bunnyPrimitive.Ka,bunnyPrimitive.Kd,bunnyPrimitive.Ks,bunnyPrimitive.shininess);
+                break;
+                case TORUS_TYPE:
+                    primitiveMaterialToShader(donutPrimitive.Ka,donutPrimitive.Kd,donutPrimitive.Ks,donutPrimitive.shininess);
+                break;
+                case CUBE_TYPE:
+                    primitiveMaterialToShader(cubePrimitive.Ka,cubePrimitive.Kd,cubePrimitive.Ks,cubePrimitive.shininess);
+                break;
+                case FLOOR_TYPE:
+                    primitiveMaterialToShader(floorPrimitive.Ka,floorPrimitive.Kd,floorPrimitive.Ks,floorPrimitive.shininess);
+                break;
+                case CYLINDER_TYPE:
+                    primitiveMaterialToShader(cylinderPrimitive.Ka,cylinderPrimitive.Kd,cylinderPrimitive.Ks,cylinderPrimitive.shininess);
+                break;
+                case LIGHT_TYPE:
+                    primitiveMaterialToShader(lightPrimitive.Ka,lightPrimitive.Kd,lightPrimitive.Ks,lightPrimitive.shininess);
+                break;
+            }
+    }
+
+    function uniformUpdate(type, color){
+        selectColor(color);
+        uploadModelView();
+        primitiveToShaderPerType(type);
+    }
+
+
+    function primitiveMaterialToShader(Ka,Kd,Ks,shininess){
+        const uKa = gl.getUniformLocation(program, "uMaterial.ka");
+        gl.uniform3fv(uKa,flatten(scale(1/RGB,Ka)));
+        const uKd = gl.getUniformLocation(program, "uMaterial.kd");
+        gl.uniform3fv(uKd,flatten(scale(1/RGB,Kd)));
+        const uKs = gl.getUniformLocation(program, "uMaterial.ks");
+        gl.uniform3fv(uKs,flatten(scale(1/RGB,Ks)));
+        const ushininess = gl.getUniformLocation(program, "uMaterial.shininess");
+        gl.uniform1f(ushininess,shininess);
+    }
+
     function selectColor(color){
         let floorColor = vec3(color[0] / 255.0, color[1] / 255.0, color[2] / 255.0);
         const uColor = gl.getUniformLocation(program, "uColor");
-        gl.useProgram(program);
+       // gl.useProgram(program);
         gl.uniform3fv(uColor, flatten(floorColor));
       }
 
     function ground(){
-      selectColor(vec3(235, 205, 75));
       multScale([2.4, 0.1, 2.4]);
-      uploadModelView();
+      uniformUpdate(CUBE_TYPE,vec3(235, 205, 75));
       CUBE.draw(gl, program, mode);
     }
 
@@ -242,15 +366,15 @@ function setup(shaders)
     }
 
     function bunny(){
-      selectColor(vec3(255, 51, 143));
       multScale([3.5, 3.5, 3.5]);
-      uploadModelView();
+      uniformUpdate(BUNNY_TYPE,vec3(255, 51, 143));
       BUNNY.draw(gl, program, mode);
     }
 
     function getCameraEye(){
       
     }
+    
 
     function render()
     {
@@ -272,7 +396,7 @@ function setup(shaders)
     
         mView = lookAt(camera.eye, camera.at, [0, 1, 0]);
     
-        mView = lookAt(camera.eye, camera.at, [0, 1, 0]);
+      // mView = lookAt(camera.eye, camera.at, [0, 1, 0]);
 
         
         
