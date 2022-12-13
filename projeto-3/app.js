@@ -117,6 +117,11 @@ function setup(shaders)
 
     let program = buildProgramFromSources(gl, shaders["shader.vert"], shaders["shader.frag"]);
 
+
+
+
+
+
     let camera = {
             eye: vec3(2, 2, 0),
             at: vec3(0, 0.6, 0),
@@ -126,6 +131,7 @@ function setup(shaders)
             far: 40.0
         };
 
+    //GUI Setup
     const gui = new dat.GUI();
     
     // Camera GUI
@@ -143,6 +149,37 @@ function setup(shaders)
     cameraFolder.add(camera, "near", 0.0, 2.0);
     cameraFolder.add(camera, "far", 0.0, 50.0);
   
+        // Material GUI
+    const materialFolder = gui.addFolder("Material");
+
+    const bunnyMaterial = materialFolder.addFolder("Bunny");
+            bunnyMaterial.addColor(bunnyPrimitive, 'Ka');
+            bunnyMaterial.addColor(bunnyPrimitive, 'Kd');
+            bunnyMaterial.addColor(bunnyPrimitive, 'Ks');
+            bunnyMaterial.add(bunnyPrimitive, 'shininess',0.0,100.0);
+    const torusMaterial = materialFolder.addFolder("Torus");
+            torusMaterial.addColor(donutPrimitive, 'Ka');
+            torusMaterial.addColor(donutPrimitive, 'Kd');
+            torusMaterial.addColor(donutPrimitive, 'Ks');
+            torusMaterial.add(donutPrimitive, 'shininess',0.0,100.0);
+    const cubeMaterial = materialFolder.addFolder("Cube");
+            cubeMaterial.addColor(cubePrimitive, 'Ka');
+            cubeMaterial.addColor(cubePrimitive, 'Kd');
+            cubeMaterial.addColor(cubePrimitive, 'Ks');
+            cubeMaterial.add(cubePrimitive, 'shininess',0.0,100.0);
+    const floorMaterial = materialFolder.addFolder("Floor");
+            floorMaterial.addColor(floorPrimitive, 'Ka');
+            floorMaterial.addColor(floorPrimitive, 'Kd');
+            floorMaterial.addColor(floorPrimitive, 'Ks');
+            floorMaterial.add(floorPrimitive, 'shininess',0.0,100.0);
+    const cylinderMaterial = materialFolder.addFolder("Cylinder");
+            cylinderMaterial.addColor(cylinderPrimitive, 'Ka');
+            cylinderMaterial.addColor(cylinderPrimitive, 'Kd');
+            cylinderMaterial.addColor(cylinderPrimitive, 'Ks');
+            cylinderMaterial.add(cylinderPrimitive, 'shininess',0.0,100.0);
+    
+    
+
     let ADJUSTABLE_VARS = {};
    
     let mProjection = perspective(
@@ -323,10 +360,28 @@ function setup(shaders)
             }
     }
 
-    function uniformUpdate(type, color){
+    function drawObject(type, color){
         selectColor(color);
         uploadModelView();
         primitiveToShaderPerType(type);
+        switch(type){
+            case BUNNY_TYPE:
+                BUNNY.draw(gl, program, mode);
+            break;
+            case TORUS_TYPE:
+                TORUS.draw(gl, program, mode);
+            break;
+            case CUBE_TYPE:
+                CUBE.draw(gl, program, mode);
+            break;
+            case FLOOR_TYPE:
+                CUBE.draw(gl, program, mode);
+            break;
+            case CYLINDER_TYPE:
+                CYLINDER.draw(gl, program, mode);
+            break;
+
+        }
     }
 
 
@@ -350,8 +405,8 @@ function setup(shaders)
 
     function ground(){
       multScale([2.4, 0.1, 2.4]);
-      uniformUpdate(CUBE_TYPE,vec3(235, 205, 75));
-      CUBE.draw(gl, program, mode);
+      drawObject(CUBE_TYPE,vec3(235, 205, 75));
+      
     }
 
     function world(){
@@ -367,8 +422,8 @@ function setup(shaders)
 
     function bunny(){
       multScale([3.5, 3.5, 3.5]);
-      uniformUpdate(BUNNY_TYPE,vec3(255, 51, 143));
-      BUNNY.draw(gl, program, mode);
+      drawObject(BUNNY_TYPE,vec3(255, 51, 143));
+
     }
 
     function getCameraEye(){
