@@ -7,6 +7,15 @@ struct MaterialI{
     float shininess;
 };
 
+struct LightInfo{
+    bool directional;
+    vec3 pos;
+    vec3 ia;
+    vec3 id;
+    vec3 is;
+
+}
+
 uniform MaterialI uMaterial;
 
 varying vec3 fPosition;
