@@ -154,27 +154,27 @@ function setup(shaders)
             bunnyMaterial.addColor(bunnyPrimitive, 'Ka');
             bunnyMaterial.addColor(bunnyPrimitive, 'Kd');
             bunnyMaterial.addColor(bunnyPrimitive, 'Ks');
-            bunnyMaterial.add(bunnyPrimitive, 'shininess',1.0,100.0);
+            bunnyMaterial.add(bunnyPrimitive, 'shininess').step(0.05).name("shininess");
     const torusMaterial = materialFolder.addFolder("Torus");
             torusMaterial.addColor(donutPrimitive, 'Ka');
             torusMaterial.addColor(donutPrimitive, 'Kd');
             torusMaterial.addColor(donutPrimitive, 'Ks');
-            torusMaterial.add(donutPrimitive, 'shininess',1.0,100.0);
+            torusMaterial.add(donutPrimitive, 'shininess').step(0.05).name("shininess");
     const cubeMaterial = materialFolder.addFolder("Cube");
             cubeMaterial.addColor(cubePrimitive, 'Ka');
             cubeMaterial.addColor(cubePrimitive, 'Kd');
             cubeMaterial.addColor(cubePrimitive, 'Ks');
-            cubeMaterial.add(cubePrimitive, 'shininess',1.0,100.0);
+            cubeMaterial.add(cubePrimitive, 'shininess').step(0.05).name("shininess");
     const floorMaterial = materialFolder.addFolder("Floor");
             floorMaterial.addColor(floorPrimitive, 'Ka');
             floorMaterial.addColor(floorPrimitive, 'Kd');
             floorMaterial.addColor(floorPrimitive, 'Ks');
-            floorMaterial.add(floorPrimitive, 'shininess',1.0,100.0);
+            floorMaterial.add(floorPrimitive, 'shininess').step(0.05).name("shininess");
     const cylinderMaterial = materialFolder.addFolder("Cylinder");
             cylinderMaterial.addColor(cylinderPrimitive, 'Ka');
             cylinderMaterial.addColor(cylinderPrimitive, 'Kd');
             cylinderMaterial.addColor(cylinderPrimitive, 'Ks');
-            cylinderMaterial.add(cylinderPrimitive, 'shininess',1.0,100.0);
+            cylinderMaterial.add(cylinderPrimitive, 'shininess').step(0.05).name("shininess");
     
         //Light GUI
     const lightFolder = gui.addFolder("Lights");
