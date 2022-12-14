@@ -132,6 +132,12 @@ function setup(shaders)
     //GUI Setup
     const gui = new dat.GUI();
     
+    //Options GUI
+    let options = {enableDepthTest:true, enableBackfaceCulling:true}
+    const optionsFolder = gui.addFolder("Options");
+    optionsFolder.add(options, "enableDepthTest").name("Depth Test");
+    optionsFolder.add(options, "enableBackfaceCulling").name("Backface Culling");
+    
     // Camera GUI
     const cameraFolder = gui.addFolder("Camera");
 
@@ -339,7 +345,6 @@ function setup(shaders)
     });
 
     gl.clearColor(0.3, 0.3, 0.3, 1.0);
-    gl.enable(gl.DEPTH_TEST);   // Enables Z-buffer depth test
 
     CUBE.init(gl);
     CYLINDER.init(gl);
@@ -542,6 +547,21 @@ function setup(shaders)
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         
         gl.useProgram(program);
+
+        if(options.enableDepthTest){
+            gl.enable(gl.DEPTH_TEST);   // Enables Z-buffer depth test
+        }
+        else{
+            gl.disable(gl.DEPTH_TEST);
+        }
+
+        if(options.enableBackfaceCulling){
+            gl.enable(gl.CULL_FACE);
+            gl.cullFace(gl.BACK);
+        }
+        else{
+            gl.disable(gl.CULL_FACE);
+        }
         
         // Send the mProjection matrix to the GLSL program
         mProjection = perspective(
