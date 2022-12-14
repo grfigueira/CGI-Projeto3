@@ -76,7 +76,7 @@ let  lightPrimitive = {
 
 let  lightInfo = [{ //spotlight
     active: true,
-    position: vec4(0.0, 10.0, 0.0, 0.0),
+    position: vec4(0.0, 10.0, 0.0, 1.0),
     ambient: vec3(50.0, 50.0, 50.0),
     diffuse: vec3(60.0, 60.0, 60.0),
     specular: vec3(200.0, 200.0, 200.0),
@@ -469,7 +469,7 @@ function setup(shaders)
         const apertureU = gl.getUniformLocation(program, "uLight["+numLight+"].aperture");
         gl.uniform1f(apertureU, aperture * Math.PI / 180.0);
         const axisU = gl.getUniformLocation(program, "uLight["+numLight+"].axis");
-        gl.uniform3fv(axisU,flatten(axis));
+        gl.uniform4fv(axisU,flatten(axis));
 
         const numLightsU = gl.getUniformLocation(program, "uNumLights");
         gl.uniform1f(numLightsU, 3);

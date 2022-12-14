@@ -15,7 +15,7 @@ struct LightInfo{
     vec3 id;
     vec3 is;
     float aperture;
-    vec3 axis;
+    vec4 axis;
     float cutoff;
 };
 
@@ -69,13 +69,13 @@ void main() {
         }
 
 
-        float alpha = dot(L, -uLight[i].axis) / (length(L) * length(-uLight[i].axis));
+        float alpha = dot(L, -vec3(uLight[i].axis)) / (length(L) * length(vec3(uLight[i].axis)));
 
         if(uLight[i].cutoff == -1.0){
-            //gl_FragColor.xyz += vec3(ambientColor + diffuse + specular);
+            gl_FragColor.xyz += vec3(ambientColor + diffuse + specular);
         }
-        else if (alpha < uLight[i].aperture){
-            float cutoffApply = pow(cos(alpha), uLight[i].cutoff);
+        else if (acos(alpha) < uLight[i].aperture){
+            float cutoffApply = pow(alpha, uLight[i].cutoff);
             gl_FragColor.xyz += vec3(ambientColor + (diffuse + specular) * cutoffApply);
         }
     }
