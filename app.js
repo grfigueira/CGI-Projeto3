@@ -12,8 +12,8 @@ import * as dat from "../../libs/dat.gui.module.js";
 
 
 let mouseMoving = false;
-const cameraSpeedX = 100.0;
-const cameraSpeedY = 100.0;
+const cameraSpeedX = 170.0;
+const cameraSpeedY = 170.0;
 const RGB = 255;
 let cameraAngleX = 0;
 let cameraAngleY = 0;
@@ -28,6 +28,9 @@ const CUBE_TYPE = "cube";
 const FLOOR_TYPE = "floor";
 const CYLINDER_TYPE = "cylinder";
 const LIGHT_TYPE = "light"
+const SPOTLIGHT_TYPE = "spotlight";
+const DIRECTIONAL_TYPE = "directional";
+const PONTUAL_TYPE = "pontual";
 
 let bunnyPrimitive = {
     Ka: vec3(227,152,150),
@@ -371,6 +374,7 @@ function setup(shaders)
             case TORUS_TYPE:
                 TORUS.draw(gl, program, mode);
             break;
+            case FLOOR_TYPE:
             case CUBE_TYPE:
                 CUBE.draw(gl, program, mode);
             break;
@@ -396,6 +400,19 @@ function setup(shaders)
         gl.uniform1f(ushininess,shininess);
     }
 
+    function lightInfoToShader(type,pos,ia,id,is){
+        const pos = gl.getUniformLocation(program, "uMaterial.ka");
+        gl.uniform3fv(uKa,flatten(scale(1/RGB,Ka)));
+        const ia = gl.getUniformLocation(program, "uMaterial.ka");
+        gl.uniform3fv(uKa,flatten(scale(1/RGB,Ka)));
+        const id = gl.getUniformLocation(program, "uMaterial.ka");
+        gl.uniform3fv(uKa,flatten(scale(1/RGB,Ka)));
+        const is = gl.getUniformLocation(program, "uMaterial.ka");
+        gl.uniform3fv(uKa,flatten(scale(1/RGB,Ka)));
+        const  = gl.getUniformLocation(program, "uMaterial.ka");
+        gl.uniform3fv(uKa,flatten(scale(1/RGB,Ka)));
+    }
+
     function selectColor(color){
         let floorColor = vec3(color[0] / 255.0, color[1] / 255.0, color[2] / 255.0);
         const uColor = gl.getUniformLocation(program, "uColor");
@@ -405,8 +422,20 @@ function setup(shaders)
 
     function ground(){
       multScale([2.4, 0.1, 2.4]);
-      drawObject(CUBE_TYPE,vec3(235, 205, 75));
+      drawObject(FLOOR_TYPE,vec3(235, 205, 75));
       
+    }
+    function box(){
+        multScale([0.5,0.5,0.5]);
+        drawObject(CUBE_TYPE,vec3(230,46,131));
+    }
+    function donut(){
+        multScale([0.5,0.5,0.5]);
+        drawObject(TORUS_TYPE,vec3(38,229,73));
+    }
+    function cylinder(){
+        multScale([0.5,1.0,0.5]);
+        drawObject(CYLINDER_TYPE,vec3(50,82,229));
     }
 
     function world(){
@@ -416,7 +445,20 @@ function setup(shaders)
             ground();
         popMatrix();
         pushMatrix();
+        multTranslation([-0.5,0.04,-0.5]);
             bunny();
+        popMatrix();
+        pushMatrix();
+        multTranslation([0.5,0.25,0.5]);
+            box();
+        popMatrix();
+        pushMatrix();
+        multTranslation([-0.5,0.15,0.5]);
+            donut();
+        popMatrix();
+        pushMatrix();
+        multTranslation([0.5,0.5,-0.5]);
+            cylinder();
         popMatrix();
     }
 
