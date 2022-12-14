@@ -118,7 +118,7 @@ function setup(shaders)
     // Drawing mode (gl.LINES or gl.TRIANGLES)
     let mode = gl.TRIANGLES;
 
-    let program = buildProgramFromSources(gl, shaders["shader.vert"], shaders["shader.frag"]);
+    let program = buildProgramFromSources(gl, shaders["phong.vert"], shaders["phong.frag"]);
 
     let camera = {
             eye: vec3(2, 2, 0),
@@ -230,8 +230,6 @@ function setup(shaders)
             axisPFolder.add(lightInfo[2].axis, 0).step(0.05).name("x"); 
             axisPFolder.add(lightInfo[2].axis, 1).step(0.05).name("y"); 
             axisPFolder.add(lightInfo[2].axis, 2).step(0.05).name("z");
-
-    let ADJUSTABLE_VARS = {};
    
     let mProjection = perspective(
             camera.fovy,
@@ -240,74 +238,8 @@ function setup(shaders)
             camera.far);
     let mView = lookAt(camera.eye, camera.at, [0, 1, 0]);
 
-    let zoom = 1.0;
-
-    /** Model parameters */
-    let ag = 0;
-    let rg = 0;
-    let rb = 0;
-    let rc = 0;
-
     resize_canvas();
     window.addEventListener("resize", resize_canvas);
-    
-    document.onM
-    
-    document.onkeydown = function(event) {
-        switch(event.key) {
-            case '1':
-                // Front view
-                mView = lookAt([0,0.6,1], [0,0.6,0], [0,1,0]);
-                break;
-            case '2':
-                // Top view
-                mView = lookAt([0,1.6,0],  [0,0.6,0], [0,0,-1]);
-                break;
-            case '3':
-                // Right view
-                mView = lookAt([1, 0.6, 0.], [0, 0.6, 0], [0, 1, 0]);
-                break;
-            case '4':
-                mView = lookAt([2, 1.2, 1], [0, 0.6, 0], [0, 1, 0]);
-                break;
-            case '9':
-                mode = gl.LINES; 
-                break;
-            case '0':
-                mode = gl.TRIANGLES;
-                break;
-            case 'p':
-                ag = Math.min(0.050, ag + 0.005);
-                break;
-            case 'o':
-                ag = Math.max(0, ag - 0.005);
-                break;
-            case 'q':
-                rg += 1;
-                break;
-            case 'e':
-                rg -= 1;
-                break;
-            case 'w':
-                rc = Math.min(120, rc+1);
-                break;
-            case 's':
-                rc = Math.max(-120, rc-1);
-                break;
-            case 'a':
-                rb -= 1;
-                break;
-            case 'd':
-                rb += 1;
-                break;
-            case '+':
-                zoom /= 1.1;
-                break;
-            case '-':
-                zoom *= 1.1;
-                break;
-        }
-    }
     
   function getCursorPosition(canvas, event) {
   
@@ -410,8 +342,7 @@ function setup(shaders)
             }
     }
 
-    function drawObject(type, color){
-        selectColor(color);
+    function drawObject(type){
         uploadModelView();
         primitiveToShaderPerType(type);
         switch(type){
@@ -481,29 +412,22 @@ function setup(shaders)
         
     }
 
-    function selectColor(color){
-        let floorColor = vec3(color[0] / 255.0, color[1] / 255.0, color[2] / 255.0);
-        const uColor = gl.getUniformLocation(program, "uColor");
-       // gl.useProgram(program);
-        gl.uniform3fv(uColor, flatten(floorColor));
-      }
-
     function ground(){
       multScale([2.4, 0.1, 2.4]);
-      drawObject(FLOOR_TYPE,vec3(235, 205, 75));
+      drawObject(FLOOR_TYPE);
       
     }
     function box(){
         multScale([0.5,0.5,0.5]);
-        drawObject(CUBE_TYPE,vec3(230,46,131));
+        drawObject(CUBE_TYPE);
     }
     function donut(){
         multScale([0.5,0.5,0.5]);
-        drawObject(TORUS_TYPE,vec3(38,229,73));
+        drawObject(TORUS_TYPE);
     }
     function cylinder(){
         multScale([0.5,1.0,0.5]);
-        drawObject(CYLINDER_TYPE,vec3(50,82,229));
+        drawObject(CYLINDER_TYPE);
     }
 
     function world(){
@@ -511,8 +435,6 @@ function setup(shaders)
         drawLight(PONTUAL_TYPE,1);
         drawLight(DIRECTIONAL_TYPE,2);
         pushMatrix();
-            //multRotationY(50.0); // Nao funciona e nao sei pq
-            //multTranslation([2.0, 0.0, 2.0]);
             ground();
         popMatrix();
         pushMatrix();
@@ -535,7 +457,7 @@ function setup(shaders)
 
     function bunny(){
       multScale([3.5, 3.5, 3.5]);
-      drawObject(BUNNY_TYPE,vec3(255, 51, 143));
+      drawObject(BUNNY_TYPE);
 
     }
     
@@ -613,5 +535,5 @@ function setup(shaders)
     }
 }
 
-const urls = ["shader.vert", "shader.frag"];
+const urls = ["phong.vert", "phong.frag"];
 loadShadersFromURLS(urls).then(shaders => setup(shaders))
