@@ -36,7 +36,7 @@ void main() {
 
     gl_FragColor = vec4(0.0,0.0,0.0,1.0);
 
-    for(int i = 0; i < 3; i++){
+    for(int i = 0; i < MAX_LIGHTS; i++){
         
         if(i == int(uNumLights)) {
             break;
@@ -83,20 +83,4 @@ void main() {
             gl_FragColor.xyz += vec3(ambientColor + (diffuse + specular) * cutoffApply);
         }
     }
-// Old version
-/*    vec3 L = normalize(fLight);
-    vec3 V = normalize(fViewer);
-    vec3 N = normalize(fNormal);
-    vec3 H = normalize(L+V);
-
-    float diffuseFactor = max( dot(L, N), 0.0 );
-    vec3 diffuse = diffuseFactor * diffuseColor;
-    float specularFactor = pow(max(dot(N, H) , 0.0), uMaterial.shininess);
-    vec3 specular = specularFactor * specularColor;
-
-    if( dot(L,N) < 0.0) {
-        specular = vec3(0.0, 0.0, 0.0);
-    }
-    gl_FragColor = vec4(ambientColor + diffuse + specular, 1.0) ;
-*/
 }
