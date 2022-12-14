@@ -460,11 +460,11 @@ function setup(shaders)
         const posU = gl.getUniformLocation(program, "uLight["+numLight+"].pos");
         gl.uniform4fv(posU,flatten(pos));
         const iaU = gl.getUniformLocation(program, "uLight["+numLight+"].ia");
-        gl.uniform3fv(iaU,flatten(ia));
+        gl.uniform3fv(iaU,flatten(scale(1/RGB,ia)));
         const idU = gl.getUniformLocation(program, "uLight["+numLight+"].id");
-        gl.uniform3fv(idU,flatten(id));
+        gl.uniform3fv(idU,flatten(scale(1/RGB,id)));
         const isU = gl.getUniformLocation(program, "uLight["+numLight+"].is");
-        gl.uniform3fv(isU,flatten(is));
+        gl.uniform3fv(isU,flatten(scale(1/RGB,is)));
     }
 
     function selectColor(color){
