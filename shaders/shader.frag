@@ -8,7 +8,6 @@ struct MaterialI{
 };
 
 struct LightInfo{
-    bool directional;
     vec3 pos;
     vec3 ia;
     vec3 id;
@@ -17,6 +16,7 @@ struct LightInfo{
 }
 
 uniform MaterialI uMaterial;
+uniform LightInfo uLight;
 
 varying vec3 fPosition;
 varying vec3 fNormal;
