@@ -47,7 +47,11 @@ void main() {
         if(uLight[i].pos.w == 0.0){ // Means its directional
             L = normalize((mViewNormals * uLight[i].pos).xyz);
         } else {
+            if(uLight[i].pos.w == 2.0){
+                L = normalize((mViewNormals * uLight[i].pos).xyz - fPosition);
+            }else{
             L = normalize((mView * uLight[i].pos).xyz - fPosition);
+            }
         }
 
         vec3 V = normalize(-fPosition);

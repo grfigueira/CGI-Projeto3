@@ -96,7 +96,7 @@ let  lightInfo = [{ //spotlight
   },
   { //pontual
     active: true,
-    position: vec4(5.0, 5.0, 2.0, 1.0),
+    position: vec4(5.0, 5.0, 2.0, 2.0),
     ambient: vec3(75.0, 75.0, 100.0),
     diffuse: vec3(75.0, 75.0, 100.0),
     specular: vec3(150, 150.0, 175.0),
@@ -154,27 +154,27 @@ function setup(shaders)
             bunnyMaterial.addColor(bunnyPrimitive, 'Ka');
             bunnyMaterial.addColor(bunnyPrimitive, 'Kd');
             bunnyMaterial.addColor(bunnyPrimitive, 'Ks');
-            bunnyMaterial.add(bunnyPrimitive, 'shininess',0.0,100.0);
+            bunnyMaterial.add(bunnyPrimitive, 'shininess',1.0,100.0);
     const torusMaterial = materialFolder.addFolder("Torus");
             torusMaterial.addColor(donutPrimitive, 'Ka');
             torusMaterial.addColor(donutPrimitive, 'Kd');
             torusMaterial.addColor(donutPrimitive, 'Ks');
-            torusMaterial.add(donutPrimitive, 'shininess',0.0,100.0);
+            torusMaterial.add(donutPrimitive, 'shininess',1.0,100.0);
     const cubeMaterial = materialFolder.addFolder("Cube");
             cubeMaterial.addColor(cubePrimitive, 'Ka');
             cubeMaterial.addColor(cubePrimitive, 'Kd');
             cubeMaterial.addColor(cubePrimitive, 'Ks');
-            cubeMaterial.add(cubePrimitive, 'shininess',0.0,100.0);
+            cubeMaterial.add(cubePrimitive, 'shininess',1.0,100.0);
     const floorMaterial = materialFolder.addFolder("Floor");
             floorMaterial.addColor(floorPrimitive, 'Ka');
             floorMaterial.addColor(floorPrimitive, 'Kd');
             floorMaterial.addColor(floorPrimitive, 'Ks');
-            floorMaterial.add(floorPrimitive, 'shininess',0.0,100.0);
+            floorMaterial.add(floorPrimitive, 'shininess',1.0,100.0);
     const cylinderMaterial = materialFolder.addFolder("Cylinder");
             cylinderMaterial.addColor(cylinderPrimitive, 'Ka');
             cylinderMaterial.addColor(cylinderPrimitive, 'Kd');
             cylinderMaterial.addColor(cylinderPrimitive, 'Ks');
-            cylinderMaterial.add(cylinderPrimitive, 'shininess',0.0,100.0);
+            cylinderMaterial.add(cylinderPrimitive, 'shininess',1.0,100.0);
     
         //Light GUI
     const lightFolder = gui.addFolder("Lights");
