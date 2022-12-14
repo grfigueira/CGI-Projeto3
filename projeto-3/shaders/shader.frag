@@ -1,6 +1,6 @@
 precision mediump float;
 
-const int MAX_LIGHTS = 3;
+const int MAX_LIGHTS = 8;
 
 struct MaterialI{
     vec3 ka;
@@ -14,12 +14,16 @@ struct LightInfo{
     vec3 ia;
     vec3 id;
     vec3 is;
+    float aperture;
+    vec3 axis;
+    float cutoff;
 };
 
 uniform MaterialI uMaterial;
 uniform LightInfo uLight[MAX_LIGHTS];
 uniform mat4 mView;
 uniform mat4 mViewNormals;
+uniform float uNumLights;
 
 varying vec3 fPosition;
 varying vec3 fNormal;
@@ -29,7 +33,15 @@ varying vec3 fViewer;
 
 
 void main() {
+
+    gl_FragColor = vec4(0.0,0.0,0.0,1.0);
+
     for(int i = 0; i < 3; i++){
+        
+        if(i == int(uNumLights)) {
+            break;
+        }
+        
         vec3 L;
 
         if(uLight[i].pos.w == 0.0){ // Means its directional
@@ -41,7 +53,7 @@ void main() {
         vec3 V = normalize(-fPosition);
         vec3 N = normalize(fNormal);
         vec3 R = reflect(-L, N);
-
+        
         float diffuseFactor = max(dot(N, L), 0.0);
         float specularFactor = pow(max(dot(R,V), 0.0), uMaterial.shininess);
 
@@ -56,7 +68,16 @@ void main() {
             specular = vec3(0.0, 0.0, 0.0);
         }
 
-        gl_FragColor.xyz += vec3(ambientColor + diffuse + specular) ;
+
+        float alpha = dot(L, -uLight[i].axis) / (length(L) * length(-uLight[i].axis));
+
+        if(uLight[i].cutoff == -1.0){
+            //gl_FragColor.xyz += vec3(ambientColor + diffuse + specular);
+        }
+        else if (alpha < uLight[i].aperture){
+            float cutoffApply = pow(cos(alpha), uLight[i].cutoff);
+            gl_FragColor.xyz += vec3(ambientColor + (diffuse + specular) * cutoffApply);
+        }
     }
 // Old version
 /*    vec3 L = normalize(fLight);

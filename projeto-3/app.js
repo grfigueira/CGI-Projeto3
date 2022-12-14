@@ -76,7 +76,7 @@ let  lightPrimitive = {
 
 let  lightInfo = [{ //spotlight
     active: true,
-    position: vec4(0.0, 10.0, 0.0, 1.0),
+    position: vec4(0.0, 10.0, 0.0, 0.0),
     ambient: vec3(50.0, 50.0, 50.0),
     diffuse: vec3(60.0, 60.0, 60.0),
     specular: vec3(200.0, 200.0, 200.0),
@@ -119,7 +119,6 @@ function setup(shaders)
     let mode = gl.TRIANGLES;
 
     let program = buildProgramFromSources(gl, shaders["shader.vert"], shaders["shader.frag"]);
-
 
     let camera = {
             eye: vec3(2, 2, 0),
@@ -434,13 +433,13 @@ function setup(shaders)
     function drawLight(type,numLight){
         switch(type){
             case SPOTLIGHT_TYPE:
-                lightInfoToShader(lightInfo[0].position,lightInfo[0].ambient,lightInfo[0].diffuse,lightInfo[0].specular,numLight);
+                lightInfoToShader(lightInfo[0].position,lightInfo[0].ambient,lightInfo[0].diffuse,lightInfo[0].specular,numLight, lightInfo[0].axis, lightInfo[0].aperture, lightInfo[0].cutoff);
             break;
             case PONTUAL_TYPE:
-                lightInfoToShader(lightInfo[2].position,lightInfo[2].ambient,lightInfo[2].diffuse,lightInfo[2].specular,numLight)
+                lightInfoToShader(lightInfo[2].position,lightInfo[2].ambient,lightInfo[2].diffuse,lightInfo[2].specular,numLight, lightInfo[2].axis, lightInfo[2].aperture, lightInfo[2].cutoff);
             break;
             case DIRECTIONAL_TYPE:
-                lightInfoToShader(lightInfo[1].position,lightInfo[1].ambient,lightInfo[1].diffuse,lightInfo[1].specular,numLight)
+                lightInfoToShader(lightInfo[1].position,lightInfo[1].ambient,lightInfo[1].diffuse,lightInfo[1].specular,numLight, lightInfo[1].axis, lightInfo[1].aperture, lightInfo[1].cutoff);
             break;
         }
     }
@@ -456,7 +455,7 @@ function setup(shaders)
         gl.uniform1f(ushininess,shininess);
     }
 
-    function lightInfoToShader(pos,ia,id,is,numLight){
+    function lightInfoToShader(pos,ia,id,is,numLight, axis, aperture, cutoff){
         const posU = gl.getUniformLocation(program, "uLight["+numLight+"].pos");
         gl.uniform4fv(posU,flatten(pos));
         const iaU = gl.getUniformLocation(program, "uLight["+numLight+"].ia");
@@ -465,6 +464,16 @@ function setup(shaders)
         gl.uniform3fv(idU,flatten(scale(1/RGB,id)));
         const isU = gl.getUniformLocation(program, "uLight["+numLight+"].is");
         gl.uniform3fv(isU,flatten(scale(1/RGB,is)));
+        const cutoffU = gl.getUniformLocation(program, "uLight["+numLight+"].cutoff");
+        gl.uniform1f(cutoffU, cutoff);
+        const apertureU = gl.getUniformLocation(program, "uLight["+numLight+"].aperture");
+        gl.uniform1f(apertureU, aperture * Math.PI / 180.0);
+        const axisU = gl.getUniformLocation(program, "uLight["+numLight+"].axis");
+        gl.uniform3fv(axisU,flatten(axis));
+
+        const numLightsU = gl.getUniformLocation(program, "uNumLights");
+        gl.uniform1f(numLightsU, 3);
+        
     }
 
     function selectColor(color){
