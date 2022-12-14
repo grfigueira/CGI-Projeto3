@@ -74,6 +74,7 @@ void main() {
 
 
         float alpha = dot(L, -vec3(uLight[i].axis)) / (length(L) * length(vec3(uLight[i].axis)));
+        
 
         if(uLight[i].cutoff == -1.0){
             gl_FragColor.xyz += vec3(ambientColor + diffuse + specular);
