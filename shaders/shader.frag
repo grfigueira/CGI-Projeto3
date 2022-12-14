@@ -1,6 +1,6 @@
 precision mediump float;
 
-const int MAX_LIGHTS = 3
+const int MAX_LIGHTS = 3;
 
 struct MaterialI{
     vec3 ka;
@@ -24,26 +24,18 @@ uniform mat4 mViewNormals;
 varying vec3 fPosition;
 varying vec3 fNormal;
 
-const vec3 lightAmb = vec3(0.2, 0.2, 0.2);
-const vec3 lightDif = vec3(0.7, 0.7, 0.7);
-const vec3 lightSpe = vec3(1.0, 1.0, 1.0);
-
-vec3 ambientColor = lightAmb * uMaterial.ka;
-vec3 diffuseColor = lightDif * uMaterial.kd;
-vec3 specularColor = lightSpe * uMaterial.ks;
-
 varying vec3 fLight;
 varying vec3 fViewer;
 
 
 void main() {
-    for(int i =0; i < 3.0; i++){
+    for(int i = 0; i < 3; i++){
         vec3 L;
 
         if(uLight[i].pos.w == 0.0){ // Means its directional
             L = normalize((mViewNormals * uLight[i].pos).xyz);
         } else {
-            L = normalize((mView * uLight[i].pos).xyz - fPosition)
+            L = normalize((mView * uLight[i].pos).xyz - fPosition);
         }
 
         vec3 V = normalize(-fPosition);
@@ -60,7 +52,7 @@ void main() {
         vec3 specularColor = uLight[i].is * uMaterial.ks;
         vec3 specular = specularFactor * specularColor;
 
-        if(dot(l, N) < 0.0) {
+        if(dot(L, N) < 0.0) {
             specular = vec3(0.0, 0.0, 0.0);
         }
 
