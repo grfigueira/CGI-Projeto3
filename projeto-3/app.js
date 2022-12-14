@@ -121,10 +121,6 @@ function setup(shaders)
     let program = buildProgramFromSources(gl, shaders["shader.vert"], shaders["shader.frag"]);
 
 
-
-
-
-
     let camera = {
             eye: vec3(2, 2, 0),
             at: vec3(0, 0.6, 0),
@@ -436,7 +432,6 @@ function setup(shaders)
     }
 
     function drawLight(type,numLight){
-        primitiveMaterialToShader(LIGHT_TYPE);
         switch(type){
             case SPOTLIGHT_TYPE:
                 lightInfoToShader(lightInfo[0].position,lightInfo[0].ambient,lightInfo[0].diffuse,lightInfo[0].specular,numLight);
@@ -528,10 +523,6 @@ function setup(shaders)
       multScale([3.5, 3.5, 3.5]);
       drawObject(BUNNY_TYPE,vec3(255, 51, 143));
 
-    }
-
-    function getCameraEye(){
-      
     }
     
 
