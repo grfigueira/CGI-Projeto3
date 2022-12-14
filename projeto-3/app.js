@@ -181,7 +181,54 @@ function setup(shaders)
             cylinderMaterial.addColor(cylinderPrimitive, 'Ks');
             cylinderMaterial.add(cylinderPrimitive, 'shininess',0.0,100.0);
     
+        //Light GUI
+    const lightFolder = gui.addFolder("Lights");
     
+    const spotlightFolder = lightFolder.addFolder("Spotlight");
+        const positionSFolder = spotlightFolder.addFolder("Position");
+            positionSFolder.add(lightInfo[0].position, 0).step(0.05).name("x"); 
+            positionSFolder.add(lightInfo[0].position, 1).step(0.05).name("y"); 
+            positionSFolder.add(lightInfo[0].position, 2).step(0.05).name("z"); 
+            positionSFolder.add(lightInfo[0].position, 3).step(0.05).name("w"); 
+        const intensitiesSFolder = spotlightFolder.addFolder("Intensities");
+            intensitiesSFolder.addColor(lightInfo[0],'ambient');
+            intensitiesSFolder.addColor(lightInfo[0],'diffuse');
+            intensitiesSFolder.addColor(lightInfo[0],'specular');
+        const axisSFolder = spotlightFolder.addFolder("Axis");
+            axisSFolder.add(lightInfo[0].axis, 0).step(0.05).name("x"); 
+            axisSFolder.add(lightInfo[0].axis, 1).step(0.05).name("y"); 
+            axisSFolder.add(lightInfo[0].axis, 2).step(0.05).name("z"); 
+        spotlightFolder.add(lightInfo[0], 'aperture',0.0,180.0);
+        spotlightFolder.add(lightInfo[0], 'cutoff',0.0,100.0);
+
+    const directionalFolder = lightFolder.addFolder("Directional");
+        const positionDFolder = directionalFolder.addFolder("Position");
+            positionDFolder.add(lightInfo[1].position, 0).step(0.05).name("x"); 
+            positionDFolder.add(lightInfo[1].position, 1).step(0.05).name("y"); 
+            positionDFolder.add(lightInfo[1].position, 2).step(0.05).name("z"); 
+        const intensitiesDFolder = directionalFolder.addFolder("Intensities");
+            intensitiesDFolder.addColor(lightInfo[1],'ambient');
+            intensitiesDFolder.addColor(lightInfo[1],'diffuse');
+            intensitiesDFolder.addColor(lightInfo[1],'specular');
+        const axisDFolder = directionalFolder.addFolder("Axis");
+            axisDFolder.add(lightInfo[1].axis, 0).step(0.05).name("x"); 
+            axisDFolder.add(lightInfo[1].axis, 1).step(0.05).name("y"); 
+            axisDFolder.add(lightInfo[1].axis, 2).step(0.05).name("z");
+
+    const pontualFolder = lightFolder.addFolder("Pontual");
+        const positionPFolder = pontualFolder.addFolder("Position");
+            positionPFolder.add(lightInfo[2].position, 0).step(0.05).name("x"); 
+            positionPFolder.add(lightInfo[2].position, 1).step(0.05).name("y"); 
+            positionPFolder.add(lightInfo[2].position, 2).step(0.05).name("z"); 
+            positionPFolder.add(lightInfo[2].position, 3).step(0.05).name("w"); 
+        const intensitiesPFolder = pontualFolder.addFolder("Intensities");
+            intensitiesPFolder.addColor(lightInfo[2],'ambient');
+            intensitiesPFolder.addColor(lightInfo[2],'diffuse');
+            intensitiesPFolder.addColor(lightInfo[2],'specular');
+        const axisPFolder = pontualFolder.addFolder("Axis");          
+            axisPFolder.add(lightInfo[2].axis, 0).step(0.05).name("x"); 
+            axisPFolder.add(lightInfo[2].axis, 1).step(0.05).name("y"); 
+            axisPFolder.add(lightInfo[2].axis, 2).step(0.05).name("z");
 
     let ADJUSTABLE_VARS = {};
    
@@ -388,6 +435,20 @@ function setup(shaders)
         }
     }
 
+    function drawLight(type,numLight){
+        primitiveMaterialToShader(LIGHT_TYPE);
+        switch(type){
+            case SPOTLIGHT_TYPE:
+                lightInfoToShader(lightInfo[0].position,lightInfo[0].ambient,lightInfo[0].diffuse,lightInfo[0].specular,numLight);
+            break;
+            case PONTUAL_TYPE:
+                lightInfoToShader(lightInfo[2].position,lightInfo[2].ambient,lightInfo[2].diffuse,lightInfo[2].specular,numLight)
+            break;
+            case DIRECTIONAL_TYPE:
+                lightInfoToShader(lightInfo[1].position,lightInfo[1].ambient,lightInfo[1].diffuse,lightInfo[1].specular,numLight)
+            break;
+        }
+    }
 
     function primitiveMaterialToShader(Ka,Kd,Ks,shininess){
         const uKa = gl.getUniformLocation(program, "uMaterial.ka");
@@ -400,17 +461,15 @@ function setup(shaders)
         gl.uniform1f(ushininess,shininess);
     }
 
-    function lightInfoToShader(type,pos,ia,id,is){
-        const pos = gl.getUniformLocation(program, "uMaterial.ka");
-        gl.uniform3fv(uKa,flatten(scale(1/RGB,Ka)));
-        const ia = gl.getUniformLocation(program, "uMaterial.ka");
-        gl.uniform3fv(uKa,flatten(scale(1/RGB,Ka)));
-        const id = gl.getUniformLocation(program, "uMaterial.ka");
-        gl.uniform3fv(uKa,flatten(scale(1/RGB,Ka)));
-        const is = gl.getUniformLocation(program, "uMaterial.ka");
-        gl.uniform3fv(uKa,flatten(scale(1/RGB,Ka)));
-        const  = gl.getUniformLocation(program, "uMaterial.ka");
-        gl.uniform3fv(uKa,flatten(scale(1/RGB,Ka)));
+    function lightInfoToShader(pos,ia,id,is,numLight){
+        const posU = gl.getUniformLocation(program, "uLight["+numLight+"].pos");
+        gl.uniform4fv(posU,flatten(pos));
+        const iaU = gl.getUniformLocation(program, "uLight["+numLight+"].ia");
+        gl.uniform3fv(iaU,flatten(ia));
+        const idU = gl.getUniformLocation(program, "uLight["+numLight+"].id");
+        gl.uniform3fv(idU,flatten(id));
+        const isU = gl.getUniformLocation(program, "uLight["+numLight+"].is");
+        gl.uniform3fv(isU,flatten(is));
     }
 
     function selectColor(color){
@@ -439,6 +498,9 @@ function setup(shaders)
     }
 
     function world(){
+        drawLight(SPOTLIGHT_TYPE,0);
+        drawLight(PONTUAL_TYPE,1);
+        drawLight(DIRECTIONAL_TYPE,2);
         pushMatrix();
             //multRotationY(50.0); // Nao funciona e nao sei pq
             //multTranslation([2.0, 0.0, 2.0]);
