@@ -10,7 +10,9 @@ The controls are intuitive and easy to use, making it a great educational tool f
 #### This was a group project for the **Computer Graphics and Interfaces** class at FCT-UNL.
 
 ## Usage
-Clone the repository and open `index.html` with a Live Server. You can use [this](https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer) VSCode plugin to do so.
+We set up a Github Pages for this repository, so you can check out the result [here](https://grfigueira.github.io/CGI-Projeto3/)!
+
+Alternitavely, you can clone the repository and open `index.html` with a Live Server. You can use [this](https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer) VSCode plugin to do so.
 
 
 ---
