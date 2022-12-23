@@ -1,14 +1,14 @@
-import { buildProgramFromSources, loadShadersFromURLS, setupWebGL } from "../libs/utils.js";
-import { ortho, lookAt, flatten, perspective, vec3, vec2,vec4, rotateY, rotateX, rotateZ, mult,scale, normalMatrix } from "../libs/MV.js";
-import {modelView, loadMatrix, multRotationX, multRotationY, multRotationZ, multScale, multTranslation, popMatrix, pushMatrix} from "../libs/stack.js";
+import { buildProgramFromSources, loadShadersFromURLS, setupWebGL } from "./libs/utils.js";
+import { ortho, lookAt, flatten, perspective, vec3, vec2,vec4, rotateY, rotateX, rotateZ, mult,scale, normalMatrix } from "./libs/MV.js";
+import {modelView, loadMatrix, multRotationX, multRotationY, multRotationZ, multScale, multTranslation, popMatrix, pushMatrix} from "./libs/stack.js";
 
-import * as CUBE from '../libs/objects/cube.js';
-import * as CYLINDER from '../libs/objects/cylinder.js'
-import * as BUNNY from '../libs/objects/bunny.js'
-import * as SPHERE from '../libs/objects/sphere.js'
-import * as TORUS from '../libs/objects/torus.js'
+import * as CUBE from './libs/objects/cube.js';
+import * as CYLINDER from './libs/objects/cylinder.js'
+import * as BUNNY from './libs/objects/bunny.js'
+import * as SPHERE from './libs/objects/sphere.js'
+import * as TORUS from './libs/objects/torus.js'
 
-import * as dat from "../../libs/dat.gui.module.js";
+import * as dat from "./libs/dat.gui.module.js";
 
 
 let mouseMoving = false;
