@@ -1,10 +1,9 @@
 # Phong Lighting Simulator
-## About The Project
 
-This **WebGL** project allows users to explore the concept of Phong lighting in a simple 3D scene. 
+This **WebGL** project allows users to explore the concept of [Phong lighting](https://en.wikipedia.org/wiki/Phong_reflection_model) in a simple 3D scene. 
 The Phong lighting model is a technique used in 3D computer graphics to calculate the way that light reflects off of different surfaces, resulting in realistic-looking lighting and shading.
 
-In this simulation, users can adjust the properties of the light source and the materials of the objects in the scene to see how they affect the overall lighting. 
+In this simulation, users can adjust the properties of the light sources (point light, directional light, spotlight) and the materials of the objects in the scene to see how they affect the overall lighting. 
 
 The controls are intuitive and easy to use, making it a great educational tool for those interested in computer graphics or 3D rendering.
 
