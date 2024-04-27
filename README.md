@@ -5,8 +5,6 @@ The Phong lighting model is a technique used in 3D computer graphics to calculat
 
 In this simulation, users can adjust the properties of the light sources (point light, directional light, spotlight) and the materials of the objects in the scene to see how they affect the overall lighting. 
 
-The controls are intuitive and easy to use, making it a great educational tool for those interested in computer graphics or 3D rendering.
-
 #### This was a group project for the **Computer Graphics and Interfaces** class at FCT-UNL.
 
 ## Usage
